@@ -3,7 +3,11 @@ use std::io::prelude::*;
 use std::io::BufReader;
 
 fn main() {
-    let f = File::open("readme.md").unwrap(); //.Creating a File requires a path argument and error handling in case the file does not exist. This program crashes if a readme.md is not present.
+    read_file_one();
+}
+
+fn read_file_one() {
+    let f = File::open("C:/Users/stapi/PycharmProjects/transcriber_with_editor/readme.md").unwrap(); //.Creating a File requires a path argument and error handling in case the file does not exist. This program crashes if a readme.md is not present.
     let mut reader = BufReader::new(f);
 
     let mut line = String::new(); //. We’ll re-use a single String object over the lifetime of the program

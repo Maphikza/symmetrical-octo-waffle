@@ -1,9 +1,13 @@
+use std::fs::File;
+use std::io::BufReader;
+use std::io::prelude::*; 
 use clap::{App, Arg};//.Bring the clap::App and clap::Arg objects into local scope
 use regex::Regex; //1. Bringing regex into local scope.
 
 fn main() {
     version_one();
-    version_two_clap()
+    // version_two_clap();
+    version_three();
 }
 
 fn version_one() {
@@ -23,6 +27,7 @@ fn version_one() {
     }
 }
 
+#[allow(dead_code)]
 fn version_two_clap() {
     let args = App::new("grep_lite") //.Incrementally build up a command argument parser. Each argument takes an Arg. In our case we only need one.
         .version("0.1")
@@ -46,3 +51,35 @@ It is the same with books. What do we seek through millions of pages?";
         }
     }
 }
+
+fn version_three() {
+    let args = App::new("grep-lite")
+        .version("0.1")
+        .about("searches for patterns")
+        .arg(
+            Arg::with_name("pattern")
+                .help("The pattern to search for")
+                .takes_value(true)
+                .required(true),
+        )
+        .arg(
+            Arg::with_name("input")
+                .help("File to search")
+                .takes_value(true)
+                .required(true),
+        )
+        .get_matches();
+    let pattern = args.value_of("pattern").unwrap();
+    let re = Regex::new(pattern).unwrap();
+    let input = args.value_of("input").unwrap();
+    let f = File::open(input).unwrap();
+    let reader = BufReader::new(f);
+    for line_ in reader.lines() {
+        let line = line_.unwrap();
+        match re.find(&line) { //.line is a String but re.find() takes &str as an argument
+            Some(_) => println!("{}", line),
+            None => (),
+        }
+    }
+}
+
